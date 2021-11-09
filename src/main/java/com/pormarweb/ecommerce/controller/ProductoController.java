@@ -1,5 +1,6 @@
 package com.pormarweb.ecommerce.controller;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.slf4j.*;
@@ -10,10 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.pormarweb.ecommerce.model.Producto;
 import com.pormarweb.ecommerce.model.Usuario;
 import com.pormarweb.ecommerce.service.ProductoService;
+import com.pormarweb.ecommerce.service.UploadFileService;
 
 @Controller
 @RequestMapping("/productos")
@@ -23,7 +27,10 @@ public class ProductoController {
 	
 	@Autowired
 	private ProductoService productoService;
-
+	
+	@Autowired
+	private UploadFileService upload;
+ 
 	@GetMapping("")
 	public String show(Model model) {
 		model.addAttribute("productos", productoService.findAll());
@@ -36,12 +43,36 @@ public class ProductoController {
 	}
 	
 	@PostMapping("/save")
-	public String save(Producto producto) {
+	public String save(Producto producto, @RequestParam("img") MultipartFile file) throws IOException {
 		LOGGER.info("Este es el contenido del objeto producto {}", producto);
 		Usuario u = new Usuario(1, "", "", "", "", "", "", "");
 		producto.setUsuario(u);
+		
+		if (producto.getId()==null) { // Cuando se crea un producto
+			
+			String nombreImagen = upload.saveImagen(file);
+			producto.setImagen(nombreImagen);
+			
+		} else { 
+
+			if (file.isEmpty()) {  // Cuando se edita el producto y la imagen no cambia
+				
+				Producto p = new Producto();
+				p = productoService.get(producto.getId()).get();
+				producto.setImagen(p.getImagen());
+				
+			} else { // Cuando se edita el producto y la imagen cambia
+				
+				String nombreImagen = upload.saveImagen(file);
+				producto.setImagen(nombreImagen);
+				
+			}
+		
+		}
+		
 		LOGGER.info("Este es el contenido del objeto producto u {}", producto);
 		productoService.save(producto);
+		
 		return "redirect:/productos";
 	}
 	
