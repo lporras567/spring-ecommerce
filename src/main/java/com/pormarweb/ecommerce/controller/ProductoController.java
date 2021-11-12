@@ -92,6 +92,8 @@ public class ProductoController {
 			
 		} else { // Cuando se edita el producto y la imagen cambia
 			
+
+			
 			// Eliminar cuando no sea la imagen por defecto
 			if (!(p.getImagen().equals("default.jpg")))
 				upload.deleteImagen(p.getImagen());
@@ -101,6 +103,7 @@ public class ProductoController {
 			
 		}
 		
+		//Usuario u = new Usuario(1, "", "", "", "", "", "", "");
 		producto.setUsuario(p.getUsuario());
 		
 		productoService.update(producto);
