@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.pormarweb.ecommerce.model.DetalleOrden;
 import com.pormarweb.ecommerce.model.Orden;
 import com.pormarweb.ecommerce.model.Producto;
-import com.pormarweb.ecommerce.service.ProductoService;
+import com.pormarweb.ecommerce.model.Usuario;
+import com.pormarweb.ecommerce.service.IProductoService;
+import com.pormarweb.ecommerce.service.IUsuarioService;
 
 @Controller
 @RequestMapping("/")
@@ -27,7 +29,10 @@ public class HomeController {
 	private final Logger log = LoggerFactory.getLogger(HomeController.class);
 
 	@Autowired
-	private ProductoService productoService;
+	private IProductoService productoService;
+	
+	@Autowired
+	private IUsuarioService usuarioService;
 
 	// Para almacenar los detalls de la orden
 	List<DetalleOrden> detalles = new ArrayList<DetalleOrden>();
@@ -136,7 +141,16 @@ public class HomeController {
 	}
 	
 	@GetMapping("/order")
-	public String order() {
+	public String order(Model model) {
+
+		Usuario usuario = usuarioService.findById(1).get();
+		
+		// Pasamos a model los  valores a pasar a la vista
+		model.addAttribute("cart", detalles);
+		model.addAttribute("orden", orden);
+		model.addAttribute("usuario", usuario);
+		
+		
 		return "usuario/resumenorden";
 	}
 

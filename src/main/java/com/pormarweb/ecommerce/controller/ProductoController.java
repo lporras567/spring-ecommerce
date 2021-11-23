@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.pormarweb.ecommerce.model.Producto;
 import com.pormarweb.ecommerce.model.Usuario;
-import com.pormarweb.ecommerce.service.ProductoService;
+import com.pormarweb.ecommerce.service.IProductoService;
 import com.pormarweb.ecommerce.service.UploadFileService;
 
 @Controller
@@ -26,7 +26,7 @@ public class ProductoController {
 	private final Logger LOGGER = LoggerFactory.getLogger(ProductoController.class);
 	
 	@Autowired
-	private ProductoService productoService;
+	private IProductoService productoService;
 	
 	@Autowired
 	private UploadFileService upload;
